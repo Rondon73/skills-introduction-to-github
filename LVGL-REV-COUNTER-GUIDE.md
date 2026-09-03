@@ -93,7 +93,22 @@ When RPM changes:
 
 For smoother visuals, animate the angle change instead of snapping, and update waveform data in a separate timer/task so the needle stays responsive.
 
-## 9. Performance notes for mixed tacho + waveform UI
+## 9. Add swipe-to-speedo navigation
+
+To switch between tachometer and speedometer views:
+
+1. Place both gauges in a parent screen/container
+2. Register a swipe gesture (left/right) on that parent
+3. On swipe, hide current gauge and show the other one (or slide between pages)
+4. Keep waveform panel persistent if it is shared by both views
+
+Recommended behavior:
+
+- Short swipe threshold to feel responsive in a vehicle UI
+- Direction lock (horizontal only) to avoid accidental switches
+- Small transition animation so context is preserved
+
+## 10. Performance notes for mixed tacho + waveform UI
 
 - Pre-create all objects once; only update needle angle
 - Avoid frequent label redraws
@@ -101,13 +116,14 @@ For smoother visuals, animate the angle change instead of snapping, and update w
 - Keep anti-aliased elements balanced with frame-rate goals
 - Redraw only waveform points that changed, not the entire waveform panel
 
-## 10. Common pitfalls
+## 11. Common pitfalls
 
 - Mismatched angle mapping between ticks and needle
 - Labels overlapping the ring at small sizes
 - Redline arc not aligned to corresponding RPM value
 - Over-updating UI from a high-frequency sensor callback
 - Waveform redraws starving tacho needle updates
+- Swipe gestures conflicting with waveform touch interactions
 
 ## Quick checklist
 
@@ -117,3 +133,4 @@ For smoother visuals, animate the angle change instead of snapping, and update w
 - [ ] Needle pivoted at exact center
 - [ ] Needle angle matches RPM values
 - [ ] Redline zone visually distinct
+- [ ] Swipe left/right reliably switches tacho and speedo
