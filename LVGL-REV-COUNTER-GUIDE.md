@@ -1,6 +1,16 @@
-# LVGL Gauge Guide: Rev Counter Background
+# LVGL Gauge Guide: Tachometer Background for a 4x4 Waveform Screen
 
-This guide shows how to build a **rev counter (tachometer) background** in LVGL, then place a needle on top.
+This guide shows how to build a **rev counter (tachometer) background** in LVGL for a **4x4 waveform screen layout**, then place a needle on top.
+
+## 0. Plan the 4x4 waveform layout first
+
+Treat the display as a 4x4 grid and reserve cell groups before drawing:
+
+- Tachometer area: typically 2x2 or 3x3 cells
+- Waveform area: remaining cells
+- Status text/icons: one edge row or column
+
+Keep the tachometer inside its reserved grid region so waveform updates do not overlap it.
 
 ## 1. Pick your gauge style
 
@@ -13,7 +23,7 @@ Decide:
 
 Keeping these values fixed early helps the layout stay consistent.
 
-## 2. Create the gauge container
+## 2. Create the gauge container in the tacho grid region
 
 Create a parent object to hold all gauge elements:
 
@@ -23,7 +33,7 @@ Create a parent object to hold all gauge elements:
 - Needle
 - Center cap
 
-Set a square size so the gauge remains circular.
+Set a square size so the gauge remains circular, and align that square to your chosen 4x4 cell block.
 
 ## 3. Draw the background ring
 
@@ -72,7 +82,7 @@ Place a small center circle over the needle base. Optional enhancements:
 - Glow/shadow for the needle
 - Subtle border around the gauge
 
-## 8. Update RPM at runtime
+## 8. Update RPM at runtime with waveform rendering
 
 When RPM changes:
 
@@ -81,14 +91,15 @@ When RPM changes:
 3. Rotate needle object
 4. Optionally color-shift ring/needle near redline
 
-For smoother visuals, animate the angle change instead of snapping.
+For smoother visuals, animate the angle change instead of snapping, and update waveform data in a separate timer/task so the needle stays responsive.
 
-## 9. Performance notes
+## 9. Performance notes for mixed tacho + waveform UI
 
 - Pre-create all objects once; only update needle angle
 - Avoid frequent label redraws
 - Use image assets for complex backgrounds on low-power MCUs
 - Keep anti-aliased elements balanced with frame-rate goals
+- Redraw only waveform points that changed, not the entire waveform panel
 
 ## 10. Common pitfalls
 
@@ -96,6 +107,7 @@ For smoother visuals, animate the angle change instead of snapping.
 - Labels overlapping the ring at small sizes
 - Redline arc not aligned to corresponding RPM value
 - Over-updating UI from a high-frequency sensor callback
+- Waveform redraws starving tacho needle updates
 
 ## Quick checklist
 
@@ -105,4 +117,3 @@ For smoother visuals, animate the angle change instead of snapping.
 - [ ] Needle pivoted at exact center
 - [ ] Needle angle matches RPM values
 - [ ] Redline zone visually distinct
-
